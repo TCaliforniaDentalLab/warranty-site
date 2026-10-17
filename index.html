@@ -455,22 +455,42 @@
 
   <script>
     const STORAGE_KEY = 'tcalifornia_patients_v1';
-    let patients = loadPatients();
+    let patients = [];
 
     const form = document.getElementById('patientForm');
     const patientList = document.getElementById('patientList');
     const exportBtn = document.getElementById('exportBtn');
     const downloadPatientPageBtn = document.getElementById('downloadPatientPage');
 
-    function loadPatients() {
-      try {
+    async function loadPatients(){
+      // Try localStorage first
+      try{
         const raw = localStorage.getItem(STORAGE_KEY);
-        console.log('loadPatients:', raw ? JSON.parse(raw) : []);
-        return raw ? JSON.parse(raw) : [];
-      } catch (e) {
-        console.error('Failed to load patients from localStorage', e);
-        return [];
-      }
+        if(raw){
+          console.log('Loaded patients from localStorage');
+          return JSON.parse(raw);
+        }
+      }catch(e){ console.warn('localStorage read failed', e); }
+
+      // Fallback: try to fetch patients.json from site root (useful after admin export/upload)
+      try{
+        const res = await fetch('patients.json?t=' + Date.now());
+        if(res.ok){
+          const json = await res.json();
+          console.log('Loaded patients from patients.json', json);
+          return json;
+        }
+      }catch(e){ console.warn('patients.json fetch failed', e); }
+
+      // default empty
+      return [];
+    }
+
+    async function init(){
+      patients = await loadPatients();
+      // persist to localStorage so admin UI shows same data
+      try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(patients, null, 2)); }catch(e){ /* ignore */ }
+      renderPatients();
     }
 
     function persistPatients() {
@@ -485,13 +505,12 @@
     }
 
     function baseForUrls(){
-      // make base that points to site root where warranty.html lives
+      const origin = window.location.origin;
+      // determine root path where files are hosted
       const path = window.location.pathname;
-      // if loaded as / or index.html, ensure trailing slash
-      let base = window.location.origin + path;
-      if (!base.endsWith('/')) base = base.replace(/index\.html$/, '');
-      // if index.html not present and path ends with '/', good
-      if (!base.endsWith('/')) base += '/';
+      // if current path contains index.html strip it
+      let base = origin + path.replace(/index\.html$/, '');
+      if(!base.endsWith('/')) base = base + '/';
       return base;
     }
 
@@ -629,7 +648,8 @@
       return String(value).replace(/"/g, '&quot;');
     }
 
-    renderPatients();
+    // initialize
+    init();
   </script>
 </body>
 </html>
