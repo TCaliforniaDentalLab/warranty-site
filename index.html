@@ -76,57 +76,18 @@
       height: 240px;
       margin: 0 auto -18px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.02);
       position: relative;
       z-index: 2;
+      overflow: hidden;
+      background: rgba(255,255,255,0.02);
     }
 
-    .brand-mark .tooth {
-      position: relative;
-      width: 150px;
-      height: 140px;
-      border-radius: 50% 50% 46% 46% / 62% 62% 38% 38%;
-      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(226,232,240,0.85));
-      transform: rotate(-8deg);
-      box-shadow: inset 0 0 0 6px rgba(255,255,255,0.5), 0 0 18px rgba(255,255,255,0.1);
-    }
-
-    .brand-mark .tooth::before {
-      content: "";
-      position: absolute;
-      left: 25px;
-      right: 25px;
-      top: 10px;
-      bottom: 18px;
-      border-radius: 50% 50% 44% 44%;
-      border-left: 7px solid rgba(14, 84, 128, 0.5);
-      border-right: 7px solid rgba(14, 84, 128, 0.5);
-      transform: skewY(-16deg);
-      background: rgba(255,255,255,0.2);
-    }
-
-    .brand-mark .tooth::after {
-      content: "";
-      position: absolute;
-      left: 66px;
-      top: 18px;
-      width: 22px;
-      height: 90px;
-      border-radius: 16px;
-      background: linear-gradient(180deg, rgba(37, 148, 217, 0.18), rgba(18, 201, 205, 0.12));
-      transform: rotate(24deg);
-    }
-
-    .brand-mark .t {
-      position: absolute;
-      color: #0c1324;
-      font-size: 180px;
-      font-weight: 800;
-      letter-spacing: -20px;
-      left: 56px;
-      top: 10px;
-      opacity: 0.95;
-      text-shadow: 0 0 25px rgba(255,255,255,0.26);
+    .brand-mark img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      filter: drop-shadow(0 0 14px rgba(255,255,255,0.16));
     }
 
     .brand-title {
@@ -403,7 +364,6 @@
     @media (max-width: 560px) {
       .brand-shell { padding: 12px; }
       .brand-mark { width: 180px; height: 180px; }
-      .brand-mark .t { left: 42px; font-size: 138px; }
       .service-row { grid-template-columns: 1fr; }
       .stats { grid-template-columns: 1fr; }
       .brand-subtitle { gap: 8px; }
@@ -416,8 +376,7 @@
     <div class="brand-shell">
       <div class="brand-inner">
         <div class="brand-mark" aria-label="Logo mark">
-          <div class="tooth"></div>
-          <div class="t">T</div>
+          <img src="logo.svg" alt="T California Dental Lab Logo" />
         </div>
 
         <h1 class="brand-title">
