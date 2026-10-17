@@ -429,7 +429,7 @@
           </div>
           <div>
             <label for="patientDate">Issue Date</label>
-            <input id="patientDate" type="date" required />
+            <input id="patientDate" type="date" />
           </div>
           <div>
             <label for="patientNotes">Notes / Work</label>
@@ -439,6 +439,7 @@
           <div class="button-row">
             <button class="btn primary" type="submit">Generate QR</button>
             <button class="btn secondary" type="button" id="exportBtn">Export JSON</button>
+            <button class="btn secondary" type="button" id="downloadPatientPage">Download Warranty HTML</button>
           </div>
         </form>
       </section>
@@ -459,23 +460,43 @@
     const form = document.getElementById('patientForm');
     const patientList = document.getElementById('patientList');
     const exportBtn = document.getElementById('exportBtn');
+    const downloadPatientPageBtn = document.getElementById('downloadPatientPage');
 
     function loadPatients() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
+        console.log('loadPatients:', raw ? JSON.parse(raw) : []);
         return raw ? JSON.parse(raw) : [];
       } catch (e) {
+        console.error('Failed to load patients from localStorage', e);
         return [];
       }
     }
 
     function persistPatients() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(patients, null, 2));
-      renderPatients();
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(patients, null, 2));
+        console.log('Saved patients:', patients);
+        renderPatients();
+      } catch (e) {
+        console.error('Failed to save patients', e);
+        alert('Could not save patient data to localStorage');
+      }
+    }
+
+    function baseForUrls(){
+      // make base that points to site root where warranty.html lives
+      const path = window.location.pathname;
+      // if loaded as / or index.html, ensure trailing slash
+      let base = window.location.origin + path;
+      if (!base.endsWith('/')) base = base.replace(/index\.html$/, '');
+      // if index.html not present and path ends with '/', good
+      if (!base.endsWith('/')) base += '/';
+      return base;
     }
 
     function qrUrl(id) {
-      const base = window.location.origin + window.location.pathname.replace(/index\.html$/, '');
+      const base = baseForUrls();
       return 'https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=' + encodeURIComponent(base + 'warranty.html?id=' + encodeURIComponent(id));
     }
 
@@ -497,12 +518,16 @@
           </div>
           <div style="display:flex;align-items:center;gap:10px;">
             <img class="mini-qr" src="${qrUrl(p.id)}" alt="QR" />
-            <button class="btn secondary" type="button" data-id="${escapeAttr(p.id)}">Delete</button>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <button class="btn secondary" type="button" data-id="${escapeAttr(p.id)}">Delete</button>
+              <button class="btn secondary" type="button" data-download="${escapeAttr(p.id)}">Download HTML</button>
+            </div>
           </div>
         `;
         patientList.appendChild(row);
       });
 
+      // attach handlers
       patientList.querySelectorAll('button[data-id]').forEach((btn) => {
         btn.addEventListener('click', () => {
           const id = btn.getAttribute('data-id');
@@ -510,24 +535,60 @@
           persistPatients();
         });
       });
+
+      patientList.querySelectorAll('button[data-download]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-download');
+          const patient = patients.find(p=>p.id===id);
+          if(patient) downloadSingleWarranty(patient);
+        });
+      });
+    }
+
+    function downloadSingleWarranty(patient){
+      const html = generateWarrantyHtml(patient);
+      const blob = new Blob([html], {type: 'text/html'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `warranty-${patient.id}.html`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
     }
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      const id = document.getElementById('patientId').value.trim();
+      let id = document.getElementById('patientId').value.trim();
       const name = document.getElementById('patientName').value.trim();
-      const date = document.getElementById('patientDate').value;
+      let date = document.getElementById('patientDate').value;
       const notes = document.getElementById('patientNotes').value.trim();
 
-      if (!id || !name || !date) {
-        alert('Please fill all required fields.');
+      if (!id || !name) {
+        alert('Please fill Patient ID and Name.');
         return;
       }
+
+      // if date not provided, use today's date
+      if(!date){
+        const d = new Date();
+        date = d.toISOString().slice(0,10);
+      }
+
+      // normalize id
+      id = id.replace(/\s+/g,'-');
 
       patients = patients.filter((p) => p.id !== id);
       patients.push({ id, name, date, notes });
       persistPatients();
       form.reset();
+
+      // after adding, automatically scroll to new patient
+      setTimeout(()=>{
+        const el = [...document.querySelectorAll('.patient-item')].find(n=>n.textContent.includes(id));
+        if(el) el.scrollIntoView({behavior:'smooth', block:'center'});
+      },160);
     });
 
     exportBtn.addEventListener('click', () => {
@@ -541,8 +602,27 @@
       URL.revokeObjectURL(url);
     });
 
+    downloadPatientPageBtn.addEventListener('click', () => {
+      if(!patients.length){ alert('No patients to download'); return; }
+      // download single HTML for the last patient added
+      const patient = patients[patients.length-1];
+      downloadSingleWarranty(patient);
+    });
+
+    function generateWarrantyHtml(patient){
+      const base = baseForUrls();
+      return `<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Warranty ${escapeHtml(patient.id)}</title></head><body>
+<h1>Warranty Card — ${escapeHtml(patient.name)}</h1>
+<p>ID: ${escapeHtml(patient.id)}</p>
+<p>Date: ${escapeHtml(patient.date)}</p>
+<p>Notes: ${escapeHtml(patient.notes||'')}</p>
+<p><a href="${base}warranty.html?id=${encodeURIComponent(patient.id)}">Open online warranty</a></p>
+</body></html>`;
+    }
+
     function escapeHtml(value) {
-      return String(value).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+      return String(value).replace(/[&<>\"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', "'": '&#39;' }[char]));
     }
 
     function escapeAttr(value) {
@@ -553,4 +633,3 @@
   </script>
 </body>
 </html>
-
