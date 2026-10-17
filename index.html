@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>T California Dental Lab</title>
+  <style>
+    :root {
+      --bg-dark: #040d16;
+      --bg-deep: #071923;
+      --gold: #d9a934;
+      --gold-soft: #f4d87b;
+      --green: #0f9d7f;
+      --cyan: #0c7de8;
+      --card: rgba(11, 26, 34, 0.9);
+      --text: #f4f7fb;
+      --muted: #d3d9e3;
+      --line: rgba(255,255,255,0.12);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(19, 76, 98, 0.4), transparent 40%),
+        linear-gradient(180deg, #051219, #040a12 35%, #02070d 100%);
+      color: var(--text);
+    }
+
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 18px 60px;
+    }
+
+    .brand-shell {
+      position: relative;
+      max-width: 1080px;
+      margin: 0 auto 26px;
+      border-radius: 999px;
+      padding: 22px 20px 20px;
+      background: linear-gradient(180deg, rgba(216,170,56,0.95), rgba(198,160,52,0.95));
+      box-shadow: 0 0 0 8px rgba(216,169,52,0.25), 0 22px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .brand-inner {
+      border-radius: 999px;
+      background:
+        radial-gradient(circle at 50% 25%, rgba(14, 80, 120, 0.95), rgba(0,0,0,0.2) 35%, rgba(0,0,0,0.8) 80%),
+        linear-gradient(180deg, rgba(1,12,17,0.96), rgba(1,10,15,0.96));
+      padding: 24px 24px 18px;
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+      position: relative;
+      border: 3px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .brand-inner::before {
+      content: "";
+      position: absolute;
+      inset: 12px 22px auto 22px;
+      height: 10px;
+      background: linear-gradient(90deg, rgba(13, 140, 103, 0.7), rgba(118, 38, 216, 0.3), rgba(13, 140, 103, 0.7));
+      border-radius: 999px;
+      filter: blur(2px);
+      opacity: 0.8;
+    }
+
+    .brand-mark {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 240px;
+      height: 240px;
+      margin: 0 auto -18px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.02);
+      position: relative;
+      z-index: 2;
+    }
+
+    .brand-mark .tooth {
+      position: relative;
+      width: 150px;
+      height: 140px;
+      border-radius: 50% 50% 46% 46% / 62% 62% 38% 38%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(226,232,240,0.85));
+      transform: rotate(-8deg);
+      box-shadow: inset 0 0 0 6px rgba(255,255,255,0.5), 0 0 18px rgba(255,255,255,0.1);
+    }
+
+    .brand-mark .tooth::before {
+      content: "";
+      position: absolute;
+      left: 25px;
+      right: 25px;
+      top: 10px;
+      bottom: 18px;
+      border-radius: 50% 50% 44% 44%;
+      border-left: 7px solid rgba(14, 84, 128, 0.5);
+      border-right: 7px solid rgba(14, 84, 128, 0.5);
+      transform: skewY(-16deg);
+      background: rgba(255,255,255,0.2);
+    }
+
+    .brand-mark .tooth::after {
+      content: "";
+      position: absolute;
+      left: 66px;
+      top: 18px;
+      width: 22px;
+      height: 90px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(37, 148, 217, 0.18), rgba(18, 201, 205, 0.12));
+      transform: rotate(24deg);
+    }
+
+    .brand-mark .t {
+      position: absolute;
+      color: #0c1324;
+      font-size: 180px;
+      font-weight: 800;
+      letter-spacing: -20px;
+      left: 56px;
+      top: 10px;
+      opacity: 0.95;
+      text-shadow: 0 0 25px rgba(255,255,255,0.26);
+    }
+
+    .brand-title {
+      text-align: center;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-size: clamp(2.8rem, 5vw, 7rem);
+      line-height: 0.92;
+      margin: 0;
+      text-shadow: 0 2px 18px rgba(0,0,0,0.45);
+      position: relative;
+      z-index: 3;
+    }
+
+    .brand-title .small {
+      display: block;
+      font-size: clamp(2rem, 3vw, 4rem);
+      font-weight: 900;
+      opacity: 0.95;
+      letter-spacing: 0.08em;
+      margin-top: 6px;
+    }
+
+    .line-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      margin: 12px auto 14px;
+      max-width: 900px;
+      position: relative;
+      z-index: 3;
+    }
+
+    .line-row::before,
+    .line-row::after {
+      content: "";
+      display: block;
+      height: 4px;
+      flex: 1;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      border-radius: 999px;
+    }
+
+    .line-row::after {
+      background: linear-gradient(90deg, transparent, var(--green), transparent);
+    }
+
+    .service-row {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(140px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+      position: relative;
+      z-index: 3;
+    }
+
+    .service-item {
+      background: rgba(18, 27, 35, 0.66);
+      border: 2px solid rgba(216,169,52,0.9);
+      border-radius: 50%;
+      height: 150px;
+      padding: 14px 8px 10px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.05), inset 0 0 18px rgba(255,255,255,0.04);
+    }
+
+    .service-item .icon {
+      font-size: 2.2rem;
+      line-height: 1;
+      margin-bottom: 8px;
+      display: block;
+      filter: drop-shadow(0 0 8px rgba(32,214,199,0.4));
+    }
+
+    .service-item .label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .brand-subtitle {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+      position: relative;
+      z-index: 3;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .brand-subtitle span {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-subtitle span:not(:last-child)::after {
+      content: "|";
+      color: rgba(216,169,52,0.8);
+      font-weight: 700;
+      margin-left: 8px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 22px;
+      margin-top: 26px;
+    }
+
+    .panel {
+      background: rgba(8, 20, 30, 0.75);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 18px 30px rgba(0,0,0,0.25);
+    }
+
+    .panel h2 {
+      margin: 0 0 10px;
+      font-size: clamp(1.5rem, 2vw, 2.1rem);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .panel p {
+      color: var(--muted);
+      margin: 0 0 18px;
+      line-height: 1.7;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .stat {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(216,169,52,0.25);
+      border-radius: 10px;
+      padding: 14px 12px;
+      text-align: center;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.7rem;
+      color: var(--gold-soft);
+    }
+
+    .stat span {
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    form {
+      display: grid;
+      gap: 12px;
+    }
+
+    label {
+      display: block;
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+    }
+
+    input, textarea {
+      margin-top: 6px;
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 1rem;
+    }
+
+    textarea { min-height: 120px; resize: vertical; }
+
+    .button-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .btn {
+      appearance: none;
+      border: none;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+    .btn.primary {
+      background: linear-gradient(90deg, var(--gold), #f9d77d);
+      color: #0a1120;
+    }
+    .btn.secondary {
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .patient-list {
+      margin-top: 12px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .patient-item {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .patient-item strong { font-size: 1rem; }
+    .patient-item small { color: var(--muted); display: block; }
+    .mini-qr {
+      width: 72px;
+      height: 72px;
+      border-radius: 8px;
+      display: block;
+      background: white;
+      padding: 4px;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 28px;
+      color: rgba(255,255,255,0.72);
+      letter-spacing: 0.08em;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+      .service-row { grid-template-columns: repeat(2, minmax(140px, 1fr)); }
+    }
+
+    @media (max-width: 560px) {
+      .brand-shell { padding: 12px; }
+      .brand-mark { width: 180px; height: 180px; }
+      .brand-mark .t { left: 42px; font-size: 138px; }
+      .service-row { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: 1fr; }
+      .brand-subtitle { gap: 8px; }
+      .brand-subtitle span { font-size: 0.72rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="brand-shell">
+      <div class="brand-inner">
+        <div class="brand-mark" aria-label="Logo mark">
+          <div class="tooth"></div>
+          <div class="t">T</div>
+        </div>
+
+        <h1 class="brand-title">
+          T California
+          <span class="small">Dental Lab</span>
+        </h1>
+
+        <div class="line-row"></div>
+
+        <div class="brand-subtitle">
+          <span>Precision</span>
+          <span>Quality</span>
+          <span>Trust</span>
+        </div>
+
+        <div class="service-row">
+          <div class="service-item"><span class="icon">🦷</span><span class="label">Crowns &amp;<br>Bridges</span></div>
+          <div class="service-item"><span class="icon">💎</span><span class="label">Zirconia<br>Crowns &amp; Bridges</span></div>
+          <div class="service-item"><span class="icon">🖥️</span><span class="label">Cad/Cam<br>Work</span></div>
+          <div class="service-item"><span class="icon">🦷</span><span class="label">Dentures</span></div>
+          <div class="service-item"><span class="icon">🦷</span><span class="label">Ortho<br>Retainer</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero">
+      <section class="panel">
+        <h2>Lifetime Warranty QR</h2>
+        <p>
+          Provide every patient with a clean digital warranty card. Scan the QR code to open the patient warranty information with terms, card details, and a printable record.
+        </p>
+
+        <div class="stats">
+          <div class="stat"><strong>100%</strong><span>Trackable</span></div>
+          <div class="stat"><strong>Lifetime</strong><span>Warranty</span></div>
+          <div class="stat"><strong>QR</strong><span>Verification</span></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Add Patient</h2>
+        <form id="patientForm">
+          <div>
+            <label for="patientId">Patient ID</label>
+            <input id="patientId" type="text" placeholder="P-1001" required />
+          </div>
+          <div>
+            <label for="patientName">Patient Name</label>
+            <input id="patientName" type="text" placeholder="Amit Kumar" required />
+          </div>
+          <div>
+            <label for="patientDate">Issue Date</label>
+            <input id="patientDate" type="date" required />
+          </div>
+          <div>
+            <label for="patientNotes">Notes / Work</label>
+            <textarea id="patientNotes" placeholder="Crown, bridge, case details, etc."></textarea>
+          </div>
+
+          <div class="button-row">
+            <button class="btn primary" type="submit">Generate QR</button>
+            <button class="btn secondary" type="button" id="exportBtn">Export JSON</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <section class="panel" style="margin-top:24px;">
+      <h2>Generated Patient Records</h2>
+      <div id="patientList" class="patient-list"></div>
+    </section>
+
+    <div class="footer">T California Dental Lab • Precision • Quality • Trust</div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'tcalifornia_patients_v1';
+    let patients = loadPatients();
+
+    const form = document.getElementById('patientForm');
+    const patientList = document.getElementById('patientList');
+    const exportBtn = document.getElementById('exportBtn');
+
+    function loadPatients() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function persistPatients() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(patients, null, 2));
+      renderPatients();
+    }
+
+    function qrUrl(id) {
+      const base = window.location.origin + window.location.pathname.replace(/index\.html$/, '');
+      return 'https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=' + encodeURIComponent(base + 'warranty.html?id=' + encodeURIComponent(id));
+    }
+
+    function renderPatients() {
+      patientList.innerHTML = '';
+      if (!patients.length) {
+        patientList.innerHTML = '<div class="patient-item"><div><strong>No patients yet</strong><small>Add a patient to generate a QR warranty card.</small></div></div>';
+        return;
+      }
+
+      patients.forEach((p) => {
+        const row = document.createElement('div');
+        row.className = 'patient-item';
+        row.innerHTML = `
+          <div>
+            <strong>${escapeHtml(p.name)}</strong>
+            <small>ID: ${escapeHtml(p.id)} • ${escapeHtml(p.date)}</small>
+            <small>${escapeHtml(p.notes || 'No notes')}</small>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <img class="mini-qr" src="${qrUrl(p.id)}" alt="QR" />
+            <button class="btn secondary" type="button" data-id="${escapeAttr(p.id)}">Delete</button>
+          </div>
+        `;
+        patientList.appendChild(row);
+      });
+
+      patientList.querySelectorAll('button[data-id]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-id');
+          patients = patients.filter((p) => p.id !== id);
+          persistPatients();
+        });
+      });
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const id = document.getElementById('patientId').value.trim();
+      const name = document.getElementById('patientName').value.trim();
+      const date = document.getElementById('patientDate').value;
+      const notes = document.getElementById('patientNotes').value.trim();
+
+      if (!id || !name || !date) {
+        alert('Please fill all required fields.');
+        return;
+      }
+
+      patients = patients.filter((p) => p.id !== id);
+      patients.push({ id, name, date, notes });
+      persistPatients();
+      form.reset();
+    });
+
+    exportBtn.addEventListener('click', () => {
+      const data = JSON.stringify(patients, null, 2);
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'patients.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+    }
+
+    function escapeAttr(value) {
+      return String(value).replace(/"/g, '&quot;');
+    }
+
+    renderPatients();
+  </script>
+</body>
+</html>
+
